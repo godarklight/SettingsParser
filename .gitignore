@@ -1,7 +1,9 @@
 *.orig
 *.dll
 *.userprefs
-bin/*
-obj/*
+SettingsParser/bin/*
+SettingsParser/obj/*
+SettingsParserTester/bin/*
+SettingsParserTester/obj/*
 *.suo
 *.csproj.user

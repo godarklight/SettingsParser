@@ -3,7 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2013
 VisualStudioVersion = 12.0.31101.0
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SettingsParser", "SettingsParser.csproj", "{A54C3B53-C088-496A-91A3-6FEE31BD7402}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SettingsParser", "SettingsParser\SettingsParser.csproj", "{A54C3B53-C088-496A-91A3-6FEE31BD7402}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SettingsParserTester", "SettingsParserTester\SettingsParserTester.csproj", "{8174844F-664D-4911-AA04-72163E387E9A}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,6 +17,10 @@ Global
 		{A54C3B53-C088-496A-91A3-6FEE31BD7402}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A54C3B53-C088-496A-91A3-6FEE31BD7402}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A54C3B53-C088-496A-91A3-6FEE31BD7402}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8174844F-664D-4911-AA04-72163E387E9A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8174844F-664D-4911-AA04-72163E387E9A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8174844F-664D-4911-AA04-72163E387E9A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8174844F-664D-4911-AA04-72163E387E9A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

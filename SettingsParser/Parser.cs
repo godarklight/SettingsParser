@@ -15,10 +15,10 @@ namespace SettingsParser
         private string baseDirectory;
 
         /// <summary>
-        /// SettingsParser constructor.
+        /// The parser's constructor.
         /// </summary>
-        /// <param name="settings">Settings property.</param>
-        /// <param name="filePath">The path to the file SettingsParser should load/write values from/to.</param>
+        /// <param name="settings">A class property.</param>
+        /// <param name="filePath">The path to the file the parser should load/write values from/to.</param>
         public SettingsParser(T settings, string filePath)
         {
             if (settings == null)
@@ -39,7 +39,7 @@ namespace SettingsParser
 
         #region Load Settings
         /// <summary>
-        /// Loads the values from the file specified in the parser's constructor.
+        /// Loads the values from a file, specified in the parser's constructor.
         /// </summary>
         public void LoadSettings()
         {
@@ -57,7 +57,7 @@ namespace SettingsParser
                     while (!sr.EndOfStream)
                     {
                         string currentLine = sr.ReadLine();
-                        if (String.IsNullOrEmpty(currentLine))
+                        if (currentLine == null)
                         {
                             break;
                         }
@@ -68,7 +68,7 @@ namespace SettingsParser
                             continue;
                         }
 
-                        if (!trimmedLine.Contains("=") || trimmedLine.StartsWith("#")) // If the line starts with a hashtag, skip it.
+                        if (!trimmedLine.Contains("=") || trimmedLine.StartsWith("#"))
                         {
                             continue;
                         }
@@ -185,7 +185,7 @@ namespace SettingsParser
         #endregion
         #region Save Settings
         /// <summary>
-        /// Saves the settings to a file specified in the parser's constructor.
+        /// Saves the settings to a file, specified in the parser's constructor.
         /// </summary>
         public void SaveSettings()
         {
@@ -214,15 +214,7 @@ namespace SettingsParser
                         {
                             sw.WriteLine(string.Format("{0}={1}", settingField.Name, settingField.GetValue(Settings)));
                         }
-                        if (settingField.FieldType == typeof(int) || settingField.FieldType == typeof(uint) || settingField.FieldType == typeof(short) || settingField.FieldType == typeof(long) || settingField.FieldType == typeof(ushort) || settingField.FieldType == typeof(ulong))
-                        {
-                            sw.WriteLine(string.Format("{0}={1}", settingField.Name, settingField.GetValue(Settings).ToString()));
-                        }
-                        if (settingField.FieldType == typeof(float) || settingField.FieldType == typeof(double) || settingField.FieldType == typeof(decimal))
-                        {
-                            sw.WriteLine(string.Format("{0}={1}", settingField.Name, settingField.GetValue(Settings).ToString()));
-                        }
-                        if (settingField.FieldType == typeof(bool))
+                        if (settingField.FieldType == typeof(int) || settingField.FieldType == typeof(uint) || settingField.FieldType == typeof(short) || settingField.FieldType == typeof(long) || settingField.FieldType == typeof(ushort) || settingField.FieldType == typeof(ulong) || settingField.FieldType == typeof(float) || settingField.FieldType == typeof(double) || settingField.FieldType == typeof(decimal) || settingField.FieldType == typeof(bool))
                         {
                             sw.WriteLine(string.Format("{0}={1}", settingField.Name, settingField.GetValue(Settings).ToString()));
                         }
@@ -235,6 +227,7 @@ namespace SettingsParser
                             }
                             sw.WriteLine(string.Format("{0}={1}", settingField.Name, settingField.GetValue(Settings)));
                         }
+                        sw.WriteLine("");
                     }
                 }
             }
