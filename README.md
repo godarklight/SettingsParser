@@ -1,4 +1,19 @@
 SettingsParser
 ==============
 
-Simple key equals value (key=value) parser for C#.
+SettingsParser is a **C#/.NET library** to make things easier for you. Tired of writing that long code for reading and writing simple `key=value` files? SettingsParser is the perfect library for you!
+
+It is a library that writes values to a text file, and reads those values from the file! Instead of having a XML or JSON configuration file, you can have a configuration file with the `key=value` layout! 100% easier and human-readable!
+
+
+
+### How to use
+```csharp
+    ConfigParser<YourClass> configParser = new ConfigParser<YourClass>(new YourClass(), "PATH-TO-CONFIG-FILE");
+    YourClass config = configParser.LoadSettings();
+```
+
+
+### Credits
+
+* [Christopher Andrews](http://github.com/godarklight/) - for teaching me advanced C# coding and helping me out
