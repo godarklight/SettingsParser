@@ -14,6 +14,7 @@ namespace SettingsParserTester
     }
     class TestClass
     {
+        [Description("This is a test string.")]
         public string testString = "The quick brown fox jumped over the lazy dog";
         public bool testBool = false;
         public int testInt = 120;
@@ -32,13 +33,13 @@ namespace SettingsParserTester
     {
         public static void Main()
         {
-            SettingsParser<TestClass> settingsParser = new SettingsParser<TestClass>(new TestClass(), Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "test.txt"));
+            ConfigParser<TestClass> settingsParser = new ConfigParser<TestClass>(new TestClass(), Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "test.txt"));
             Console.WriteLine("Loading settings");
-            settingsParser.LoadSettings();
+            TestClass settings = settingsParser.LoadSettings();
             FieldInfo[] settingsFields = typeof(TestClass).GetFields();
             foreach (FieldInfo settingField in settingsFields)
             {
-                Console.WriteLine(settingField.Name + "=" + settingField.GetValue(new TestClass()));
+                Console.WriteLine(settingField.Name + "=" + settingField.GetValue(settings));
             }
             Console.ReadKey();
         }

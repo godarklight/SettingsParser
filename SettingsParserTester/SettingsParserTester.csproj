@@ -42,9 +42,6 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="App.config" />
-  </ItemGroup>
-  <ItemGroup>
     <ProjectReference Include="..\SettingsParser\SettingsParser.csproj">
       <Project>{a54c3b53-c088-496a-91a3-6fee31bd7402}</Project>
       <Name>SettingsParser</Name>

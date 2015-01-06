@@ -8,7 +8,7 @@ using System.Collections.Generic;
 
 namespace SettingsParser
 {
-    public class SettingsParser<T> where T : class
+    public class ConfigParser<T> where T : class
     {
         public T Settings { get; private set; }
         private string filePath;
@@ -19,7 +19,7 @@ namespace SettingsParser
         /// </summary>
         /// <param name="settings">A class property.</param>
         /// <param name="filePath">The path to the file the parser should load/write values from/to.</param>
-        public SettingsParser(T settings, string filePath)
+        public ConfigParser(T settings, string filePath)
         {
             if (settings == null)
             {
@@ -41,7 +41,7 @@ namespace SettingsParser
         /// <summary>
         /// Loads the values from a file, specified in the parser's constructor.
         /// </summary>
-        public void LoadSettings()
+        public T LoadSettings()
         {
             FieldInfo[] settingFields = typeof(T).GetFields();
 
@@ -169,10 +169,11 @@ namespace SettingsParser
                                 }
                                 if (settingField.FieldType.IsEnum)
                                 {
-                                    object enumValue = Enum.Parse(settingField.FieldType, currentValue);
-                                    if (settingField.FieldType.IsEnumDefined(enumValue))
+                                    int intValue = int.Parse(currentValue);
+                                    Array enumValues = settingField.FieldType.GetEnumValues();
+                                    if (intValue <= enumValues.Length)
                                     {
-                                        settingField.SetValue(Settings, enumValue);
+                                        settingField.SetValue(Settings, enumValues.GetValue(intValue));
                                     }
                                 }
                             }
@@ -181,6 +182,7 @@ namespace SettingsParser
                 }
             }
             SaveSettings();
+            return Settings;
         }
         #endregion
         #region Save Settings
@@ -225,7 +227,7 @@ namespace SettingsParser
                             {
                                 sw.WriteLine(string.Format("# {0} - {1}", enumValue.ToString(), settingField.FieldType.GetEnumValues().GetValue(enumValue)));
                             }
-                            sw.WriteLine(string.Format("{0}={1}", settingField.Name, settingField.GetValue(Settings)));
+                            sw.WriteLine(string.Format("{0}={1}", settingField.Name, (int)settingField.GetValue(Settings)));
                         }
                         sw.WriteLine("");
                     }
