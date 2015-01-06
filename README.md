@@ -6,6 +6,9 @@ SettingsParser is a **C#/.NET library** to make things easier for you. Tired of 
 It is a library that writes values to a text file, and reads those values from the file! Instead of having a XML or JSON configuration file, you can have a configuration file with the `key=value` layout! 100% easier and human-readable!
 
 
+### Requirements
+* (.NET Framework 4.0)[http://www.microsoft.com/en-us/download/details.aspx?id=17851] (should work with Mono)
+
 
 ### How to use
 ```csharp
