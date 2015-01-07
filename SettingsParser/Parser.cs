@@ -41,7 +41,7 @@ namespace SettingsParser
         /// <summary>
         /// Loads the values from a file, specified in the parser's constructor.
         /// </summary>
-        public T LoadSettings()
+        public void LoadSettings()
         {
             FieldInfo[] settingFields = typeof(T).GetFields();
 
@@ -182,7 +182,6 @@ namespace SettingsParser
                 }
             }
             SaveSettings();
-            return Settings;
         }
         #endregion
         #region Save Settings
