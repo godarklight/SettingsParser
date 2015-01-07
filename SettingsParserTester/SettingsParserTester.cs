@@ -1,6 +1,5 @@
 ﻿using System;
 using SettingsParser;
-using SettingsParser.Attributes;
 using System.IO;
 using System.Reflection;
 
