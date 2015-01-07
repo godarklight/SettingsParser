@@ -220,10 +220,11 @@ namespace SettingsParser
                         }
                         if (settingField.FieldType.IsEnum)
                         {
+                            sw.WriteLine("#");
                             sw.WriteLine("# Valid values are:");
                             foreach (object enumValue in settingField.FieldType.GetEnumValues())
                             {
-                                sw.WriteLine(string.Format("# {0}", enumValue.ToString()));
+                                sw.WriteLine(string.Format("#   {0}", enumValue.ToString()));
                             }
                             sw.WriteLine(string.Format("{0}={1}", settingField.Name, settingField.GetValue(Settings)));
                         }
