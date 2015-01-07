@@ -12,7 +12,6 @@ namespace SettingsParser
     {
         public T Settings { get; private set; }
         private string filePath;
-        private string baseDirectory;
 
         /// <summary>
         /// The parser's constructor.
@@ -33,7 +32,6 @@ namespace SettingsParser
 
             this.Settings = settings;
             this.filePath = filePath;
-            this.baseDirectory = Path.GetDirectoryName(filePath);
             System.Threading.Thread.CurrentThread.CurrentCulture = System.Globalization.CultureInfo.GetCultureInfo("en-US");
         }
 
@@ -41,7 +39,7 @@ namespace SettingsParser
         /// <summary>
         /// Loads the values from a file, specified in the parser's constructor.
         /// </summary>
-        public T LoadSettings()
+        public void LoadSettings()
         {
             FieldInfo[] settingFields = typeof(T).GetFields();
 
@@ -182,7 +180,6 @@ namespace SettingsParser
                 }
             }
             SaveSettings();
-            return Settings;
         }
         #endregion
         #region Save Settings

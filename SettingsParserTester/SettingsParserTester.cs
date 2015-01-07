@@ -35,11 +35,11 @@ namespace SettingsParserTester
         {
             ConfigParser<TestClass> settingsParser = new ConfigParser<TestClass>(new TestClass(), Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "test.txt"));
             Console.WriteLine("Loading settings");
-            TestClass settings = settingsParser.LoadSettings();
+            settingsParser.LoadSettings();
             FieldInfo[] settingsFields = typeof(TestClass).GetFields();
             foreach (FieldInfo settingField in settingsFields)
             {
-                Console.WriteLine(settingField.Name + "=" + settingField.GetValue(settings));
+                Console.WriteLine(settingField.Name + "=" + settingField.GetValue(settingsParser.Settings));
             }
             Console.ReadKey();
         }
