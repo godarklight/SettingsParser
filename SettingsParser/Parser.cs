@@ -3,7 +3,6 @@ using System.IO;
 using System.Net;
 using System.Linq;
 using System.Reflection;
-using SettingsParser.Attributes;
 using System.Collections.Generic;
 
 namespace SettingsParser
@@ -169,11 +168,10 @@ namespace SettingsParser
                                 }
                                 if (settingField.FieldType.IsEnum)
                                 {
-                                    int intValue = int.Parse(currentValue);
-                                    Array enumValues = settingField.FieldType.GetEnumValues();
-                                    if (intValue <= enumValues.Length)
+                                    if (Enum.IsDefined(settingField.FieldType, currentValue))
                                     {
-                                        settingField.SetValue(Settings, enumValues.GetValue(intValue));
+                                        object enumValue = Enum.Parse(settingField.FieldType, currentValue);
+                                        settingField.SetValue(Settings, enumValue);
                                     }
                                 }
                             }
@@ -201,6 +199,9 @@ namespace SettingsParser
                 {
                     sw.WriteLine("# Lines starting with hashtags are ignored by the reader");
                     sw.WriteLine("# Setting file format: (key)=(value)");
+                    sw.WriteLine("#");
+                    sw.WriteLine("# Invalid values will be reset to default");
+                    sw.WriteLine("#");
                     sw.WriteLine("");
                     foreach (FieldInfo settingField in settingFields)
                     {
@@ -222,11 +223,11 @@ namespace SettingsParser
                         if (settingField.FieldType.IsEnum)
                         {
                             sw.WriteLine("# Valid values are:");
-                            foreach (int enumValue in settingField.FieldType.GetEnumValues())
+                            foreach (object enumValue in settingField.FieldType.GetEnumValues())
                             {
-                                sw.WriteLine(string.Format("# {0} - {1}", enumValue.ToString(), settingField.FieldType.GetEnumValues().GetValue(enumValue)));
+                                sw.WriteLine(string.Format("# {0}", enumValue.ToString()));
                             }
-                            sw.WriteLine(string.Format("{0}={1}", settingField.Name, (int)settingField.GetValue(Settings)));
+                            sw.WriteLine(string.Format("{0}={1}", settingField.Name, settingField.GetValue(Settings)));
                         }
                         sw.WriteLine("");
                     }
