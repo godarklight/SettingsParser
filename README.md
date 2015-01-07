@@ -11,10 +11,7 @@ It is a library that writes values to a text file, and reads those values from t
 
 
 ### How to use
-```csharp
-    ConfigParser<YourClass> configParser = new ConfigParser<YourClass>(new YourClass(), "PATH-TO-CONFIG-FILE");
-    YourClass config = configParser.LoadSettings();
-```
+See [SettingsParserTester](https://github.com/RockyTV/SettingsParser/blob/master/SettingsParserTester/SettingsParserTester.cs)
 
 
 ### Credits
