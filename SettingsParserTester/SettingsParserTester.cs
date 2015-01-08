@@ -13,7 +13,7 @@ namespace SettingsParserTester
     }
     class TestClass
     {
-        [Description("This is a test string.")]
+        [Description("This is a test string.\r\nTest2\r\nTest3")]
         public string testString = "The quick brown fox jumped over the lazy dog";
         public bool testBool = false;
         public int testInt = 120;

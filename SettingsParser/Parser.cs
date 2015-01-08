@@ -171,6 +171,20 @@ namespace SettingsParser
                                         object enumValue = Enum.Parse(settingField.FieldType, currentValue);
                                         settingField.SetValue(Settings, enumValue);
                                     }
+                                    else
+                                    {
+                                        if (settingField.FieldType.GetEnumUnderlyingType() == typeof(int))
+                                        {
+                                            int intValue;
+                                            if (int.TryParse(currentValue, out intValue))
+                                            {
+                                                if (Enum.IsDefined(settingField.FieldType, intValue))
+                                                {
+                                                    settingField.SetValue(Settings, intValue);
+                                                }
+                                            }
+                                        }
+                                    }
                                 }
                             }
                         }
@@ -204,7 +218,7 @@ namespace SettingsParser
                     foreach (FieldInfo settingField in settingFields)
                     {
                         object descriptionAttribute = settingField.GetCustomAttributes(typeof(DescriptionAttribute), true).FirstOrDefault();
-                        string settingDescription = descriptionAttribute != null ? ((DescriptionAttribute)descriptionAttribute).Description : string.Empty;
+                        string settingDescription = descriptionAttribute != null ? ((DescriptionAttribute)descriptionAttribute).Description.Replace("\n", String.Format("{0}# ", Environment.NewLine)) : string.Empty;
 
                         if (!string.IsNullOrEmpty(settingDescription))
                         {
