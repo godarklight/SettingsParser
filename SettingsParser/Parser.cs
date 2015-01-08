@@ -171,6 +171,20 @@ namespace SettingsParser
                                         object enumValue = Enum.Parse(settingField.FieldType, currentValue);
                                         settingField.SetValue(Settings, enumValue);
                                     }
+                                    else
+                                    {
+                                        if (settingField.FieldType.GetEnumUnderlyingType() == typeof(int))
+                                        {
+                                            int intValue;
+                                            if (int.TryParse(currentValue, out intValue))
+                                            {
+                                                if (Enum.IsDefined(settingField.FieldType, intValue))
+                                                {
+                                                    settingField.SetValue(Settings, intValue);
+                                                }
+                                            }
+                                        }
+                                    }
                                 }
                             }
                         }
