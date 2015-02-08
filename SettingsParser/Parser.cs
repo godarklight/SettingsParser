@@ -3,6 +3,7 @@ using System.IO;
 using System.Net;
 using System.Linq;
 using System.Reflection;
+using System.ComponentModel;
 using System.Collections.Generic;
 
 namespace SettingsParser

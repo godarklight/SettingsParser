@@ -2,6 +2,7 @@
 using SettingsParser;
 using System.IO;
 using System.Reflection;
+using System.ComponentModel;
 
 namespace SettingsParserTester
 {
