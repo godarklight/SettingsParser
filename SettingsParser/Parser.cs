@@ -5,6 +5,7 @@ using System.Linq;
 using System.Reflection;
 using System.ComponentModel;
 using System.Collections.Generic;
+using System.Collections;
 
 namespace SettingsParser
 {
@@ -187,6 +188,15 @@ namespace SettingsParser
                                         }
                                     }
                                 }
+                                if (settingField.FieldType == typeof(List<string>))
+                                {
+                                    List<string> newList = new List<string>();
+                                    foreach (string strVal in currentValue.Split(','))
+                                    {
+                                        newList.Add(strVal);
+                                    }
+                                    settingField.SetValue(Settings, newList);
+                                }
                             }
                         }
                     }
@@ -242,6 +252,11 @@ namespace SettingsParser
                                 sw.WriteLine(string.Format("#   {0}", enumValue.ToString()));
                             }
                             sw.WriteLine(string.Format("{0}={1}", settingField.Name, settingField.GetValue(Settings)));
+                        }
+                        if (settingField.FieldType == typeof(List<string>))
+                        {
+                            List<string> listValue = (List<string>)settingField.GetValue(Settings);
+                            sw.WriteLine(string.Format("{0}={1}", settingField.Name, string.Join(",", listValue.ToArray())));
                         }
                         sw.WriteLine("");
                     }

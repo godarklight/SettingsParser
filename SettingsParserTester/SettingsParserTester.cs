@@ -3,6 +3,7 @@ using SettingsParser;
 using System.IO;
 using System.Reflection;
 using System.ComponentModel;
+using System.Collections.Generic;
 
 namespace SettingsParserTester
 {
@@ -27,6 +28,7 @@ namespace SettingsParserTester
         public short testShort = 32767;
         public ushort testUShort = 65535;
         public TestEnum testEnum = TestEnum.TEST1;
+        public List<string> testList = new List<string> { "abc", "def", "ghi" };
     }
 
     class SettingsParserTester
