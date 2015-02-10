@@ -28,7 +28,7 @@ namespace SettingsParserTester
         public short testShort = 32767;
         public ushort testUShort = 65535;
         public TestEnum testEnum = TestEnum.TEST1;
-        public List<string> testList = new List<string> { "abc", "def", "ghi" };
+        public List<string> testList = new List<string> { "abc", "def", "ghi", "\t\r\n\tabc" };
     }
 
     class SettingsParserTester
@@ -41,7 +41,15 @@ namespace SettingsParserTester
             FieldInfo[] settingsFields = typeof(TestClass).GetFields();
             foreach (FieldInfo settingField in settingsFields)
             {
-                Console.WriteLine(settingField.Name + "=" + settingField.GetValue(settingsParser.Settings));
+                if (settingField.FieldType == typeof(List<string>))
+                {
+                    List<string> list = (List<string>)settingField.GetValue(settingsParser.Settings);
+                    Console.WriteLine(settingField.Name + "=" + string.Join(",", list.ToArray()));
+                }
+                else
+                {
+                    Console.WriteLine(settingField.Name + "=" + settingField.GetValue(settingsParser.Settings));
+                }
             }
             Console.ReadKey();
         }

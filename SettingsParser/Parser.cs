@@ -3,9 +3,10 @@ using System.IO;
 using System.Net;
 using System.Linq;
 using System.Reflection;
+using System.Collections;
 using System.ComponentModel;
 using System.Collections.Generic;
-using System.Collections;
+using System.Text.RegularExpressions;
 
 namespace SettingsParser
 {
@@ -191,9 +192,9 @@ namespace SettingsParser
                                 if (settingField.FieldType == typeof(List<string>))
                                 {
                                     List<string> newList = new List<string>();
-                                    foreach (string strVal in currentValue.Split(','))
+                                    foreach (string strVal in currentValue.Split(new char[] {','}, StringSplitOptions.RemoveEmptyEntries).Where(x => !string.IsNullOrWhiteSpace(x)))
                                     {
-                                        newList.Add(strVal);
+                                        newList.Add(Regex.Unescape(strVal));
                                     }
                                     settingField.SetValue(Settings, newList);
                                 }
@@ -256,7 +257,13 @@ namespace SettingsParser
                         if (settingField.FieldType == typeof(List<string>))
                         {
                             List<string> listValue = (List<string>)settingField.GetValue(Settings);
-                            sw.WriteLine(string.Format("{0}={1}", settingField.Name, string.Join(",", listValue.ToArray())));
+                            List<string> escapedList = new List<string>();
+                            foreach (string listItem in listValue)
+                            {
+                                string escapedItem = Regex.Escape(listItem);
+                                escapedList.Add(escapedItem);
+                            }
+                            sw.WriteLine(string.Format("{0}={1}", settingField.Name, string.Join(",", escapedList.ToArray())));
                         }
                         sw.WriteLine("");
                     }
