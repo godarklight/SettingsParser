@@ -6,13 +6,14 @@ using System.Reflection;
 using System.Collections;
 using System.ComponentModel;
 using System.Collections.Generic;
-using System.Text.RegularExpressions;
+using System.Text;
 
 namespace SettingsParser
 {
     public class ConfigParser<T> where T : class
     {
         public T Settings { get; private set; }
+        private Dictionary<Type, Func<string, object>> fromString = new Dictionary<Type, Func<string, object>>();
         private string filePath;
 
         /// <summary>
@@ -34,6 +35,20 @@ namespace SettingsParser
 
             this.Settings = settings;
             this.filePath = filePath;
+
+            fromString[typeof(string)] = (string x) => x;
+            fromString[typeof(decimal)] = (string x) => { decimal parse; if (decimal.TryParse(x, out parse)) return parse; return null;};
+            fromString[typeof(short)] = (string x) => { short parse; if (short.TryParse(x, out parse)) return parse; return null;};
+            fromString[typeof(ushort)] = (string x) => { ushort parse; if (ushort.TryParse(x, out parse)) return parse; return null;};
+            fromString[typeof(int)] = (string x) => { int parse; if (int.TryParse(x, out parse)) return parse; return null;};
+            fromString[typeof(uint)] = (string x) => { uint parse; if (uint.TryParse(x, out parse)) return parse; return null;};
+            fromString[typeof(long)] = (string x) => { long parse; if (long.TryParse(x, out parse)) return parse; return null;};
+            fromString[typeof(ulong)] = (string x) => { ulong parse; if (ulong.TryParse(x, out parse)) return parse; return null;};
+            fromString[typeof(float)] = (string x) => { float parse; if (float.TryParse(x, out parse)) return parse; return null;};
+            fromString[typeof(double)] = (string x) => { double parse; if (double.TryParse(x, out parse)) return parse; return null;};
+            fromString[typeof(bool)] = (string x) => { return (x == "1" || x.ToLower() == bool.TrueString.ToLower());};
+            fromString[typeof(char)] = (string x) => { char parse; if (char.TryParse(x, out parse)) return parse; return null;};
+
             System.Threading.Thread.CurrentThread.CurrentCulture = System.Globalization.CultureInfo.GetCultureInfo("en-US");
         }
 
@@ -80,93 +95,7 @@ namespace SettingsParser
                         {
                             if (settingField.Name == currentKey)
                             {
-                                if (settingField.FieldType == typeof(string))
-                                {
-                                    settingField.SetValue(Settings, currentValue);
-                                }
-                                if (settingField.FieldType == typeof(bool)) // We do not allow invalid values
-                                {
-                                    if (currentValue == "1" || currentValue.ToLower() == bool.TrueString.ToLower())
-                                    {
-                                        settingField.SetValue(Settings, true);
-                                    }
-                                    else if (currentValue == "0" || currentValue.ToLower() == bool.FalseString.ToLower())
-                                    {
-                                        settingField.SetValue(Settings, false);
-                                    }
-                                }
-                                if (settingField.FieldType == typeof(double))
-                                {
-                                    double doubleValue;
-                                    if (double.TryParse(currentValue, out doubleValue))
-                                    {
-                                        settingField.SetValue(Settings, doubleValue);
-                                    }
-                                }
-                                if (settingField.FieldType == typeof(float))
-                                {
-                                    float floatValue;
-                                    if (float.TryParse(currentValue, out floatValue))
-                                    {
-                                        settingField.SetValue(Settings, floatValue);
-                                    }
-                                }
-                                if (settingField.FieldType == typeof(decimal))
-                                {
-                                    decimal decimalValue;
-                                    if (decimal.TryParse(currentValue, out decimalValue))
-                                    {
-                                        settingField.SetValue(Settings, decimalValue);
-                                    }
-                                }
-                                if (settingField.FieldType == typeof(short))
-                                {
-                                    short shortValue;
-                                    if (short.TryParse(currentValue, out shortValue))
-                                    {
-                                        settingField.SetValue(Settings, shortValue);
-                                    }
-                                }
-                                if (settingField.FieldType == typeof(int))
-                                {
-                                    int intValue;
-                                    if (int.TryParse(currentValue, out intValue))
-                                    {
-                                        settingField.SetValue(Settings, intValue);
-                                    }
-                                }
-                                if (settingField.FieldType == typeof(long))
-                                {
-                                    long longValue;
-                                    if (long.TryParse(currentValue, out longValue))
-                                    {
-                                        settingField.SetValue(Settings, longValue);
-                                    }
-                                }
-                                if (settingField.FieldType == typeof(uint))
-                                {
-                                    uint uintValue;
-                                    if (uint.TryParse(currentValue, out uintValue))
-                                    {
-                                        settingField.SetValue(Settings, uintValue);
-                                    }
-                                }
-                                if (settingField.FieldType == typeof(ulong))
-                                {
-                                    ulong ulongValue;
-                                    if (ulong.TryParse(currentValue, out ulongValue))
-                                    {
-                                        settingField.SetValue(Settings, ulongValue);
-                                    }
-                                }
-                                if (settingField.FieldType == typeof(ushort))
-                                {
-                                    ushort ushortValue;
-                                    if (ushort.TryParse(currentValue, out ushortValue))
-                                    {
-                                        settingField.SetValue(Settings, ushortValue);
-                                    }
-                                }
+                                //Enums
                                 if (settingField.FieldType.IsEnum)
                                 {
                                     if (Enum.IsDefined(settingField.FieldType, currentValue))
@@ -188,15 +117,63 @@ namespace SettingsParser
                                             }
                                         }
                                     }
+                                    continue;
                                 }
-                                if (settingField.FieldType == typeof(List<string>))
+                                //List
+                                if (settingField.FieldType.IsGenericType && settingField.FieldType.GetGenericTypeDefinition() == typeof(List<>))
                                 {
-                                    List<string> newList = new List<string>();
-                                    foreach (string strVal in currentValue.Split(new char[] {','}, StringSplitOptions.RemoveEmptyEntries).Where(x => !string.IsNullOrWhiteSpace(x)))
-                                    {
-                                        newList.Add(Regex.Unescape(strVal));
-                                    }
+                                    object newList = Activator.CreateInstance(settingField.FieldType);
                                     settingField.SetValue(Settings, newList);
+                                    Type listType = settingField.FieldType.GetGenericArguments()[0];
+                                    if (!fromString.ContainsKey(listType))
+                                    {
+                                        continue;
+                                    }
+                                    MethodInfo addMethodInfo = newList.GetType().GetMethod("Add");
+                                    foreach (string splitValue in SplitArrayValues(currentValue))
+                                    {
+                                        object insertObject = fromString[listType](splitValue);
+                                        if (insertObject != null)
+                                        {
+                                            addMethodInfo.Invoke(newList, new object[] { insertObject });
+                                        }
+                                    }
+                                    continue;
+                                }
+                                //Array
+                                if (settingField.FieldType.IsArray)
+                                {
+                                    Type elementType = settingField.FieldType.GetElementType();
+                                    if (!fromString.ContainsKey(elementType))
+                                    {
+                                        object emptyArray = Activator.CreateInstance(settingField.FieldType, new object[] { 0 });
+                                        settingField.SetValue(Settings, emptyArray);
+                                        continue;
+                                    }
+                                    Type genericListType = typeof(List<>).MakeGenericType(new Type[] { elementType });
+                                    object newList = Activator.CreateInstance(genericListType);
+                                    MethodInfo addMethodInfo = genericListType.GetMethod("Add");
+                                    foreach (string splitValue in SplitArrayValues(currentValue))
+                                    {
+                                        object insertObject = fromString[elementType](splitValue);
+                                        if (insertObject != null)
+                                        {
+                                            addMethodInfo.Invoke(newList, new object[] { insertObject });
+                                        }
+                                    }
+                                    MethodInfo toArrayMethodInfo = genericListType.GetMethod("ToArray");
+                                    object newArray = toArrayMethodInfo.Invoke(newList, new object[0]);
+                                    settingField.SetValue(Settings, newArray);
+                                    continue;
+                                }
+                                //Field
+                                if (fromString.ContainsKey(settingField.FieldType))
+                                {
+                                    object parseValue = fromString[settingField.FieldType](currentValue);
+                                    if (parseValue != null)
+                                    {
+                                        settingField.SetValue(Settings, parseValue);
+                                    }
                                 }
                             }
                         }
@@ -254,18 +231,40 @@ namespace SettingsParser
                             }
                             sw.WriteLine(string.Format("{0}={1}", settingField.Name, settingField.GetValue(Settings)));
                         }
-                        if (settingField.FieldType == typeof(List<string>))
+                        if (settingField.FieldType.IsGenericType && settingField.FieldType.GetGenericTypeDefinition() == typeof(List<>))
                         {
-                            List<string> listValue = (List<string>)settingField.GetValue(Settings);
+                            //Get list
+                            object settingsList = settingField.GetValue(Settings);
+                            //Get enumerator
+                            MethodInfo iEnumeratorInfo = settingField.FieldType.GetMethod("GetEnumerator");
+                            object listEnumerator = iEnumeratorInfo.Invoke(settingsList, new object[0]);
+                            //Get enumerator methods
+                            MethodInfo moveNextInfo = listEnumerator.GetType().GetMethod("MoveNext");
+                            MethodInfo currentInfo = listEnumerator.GetType().GetProperty("Current").GetGetMethod();
+                            MethodInfo disposeInfo = listEnumerator.GetType().GetMethod("Dispose");
                             List<string> escapedList = new List<string>();
-                            foreach (string listItem in listValue)
+                            //Foreach object in list...
+                            while ((bool)moveNextInfo.Invoke(listEnumerator, null))
                             {
-                                string escapedItem = Regex.Escape(listItem);
-                                escapedList.Add(escapedItem);
+                                object current = currentInfo.Invoke(listEnumerator, null);
+                                escapedList.Add(EscapeString(current.ToString()));
                             }
-                            sw.WriteLine(string.Format("{0}={1}", settingField.Name, string.Join(",", escapedList.ToArray())));
+                            disposeInfo.Invoke(listEnumerator, null);
+                            sw.WriteLine(string.Format("{0}={1}", settingField.Name, string.Join(",", escapedList)));
                         }
-                        sw.WriteLine("");
+                        if (settingField.FieldType.IsArray)
+                        {
+                            MethodInfo IEnumeratorInfo = settingField.FieldType.GetMethod("GetEnumerator");
+                            object settingsList = settingField.GetValue(Settings);
+                            IEnumerator objectEnum = (IEnumerator)IEnumeratorInfo.Invoke(settingsList, new object[0]);
+                            List<string> escapedList = new List<string>();
+                            while (objectEnum.MoveNext())
+                            {
+                                escapedList.Add(EscapeString(objectEnum.Current.ToString()));
+                            }
+                            sw.WriteLine(string.Format("{0}={1}", settingField.Name, string.Join(",", escapedList)));
+                        }
+                        sw.WriteLine();
                     }
                 }
             }
@@ -276,5 +275,87 @@ namespace SettingsParser
             File.Move(filePath + ".tmp", filePath);
         }
         #endregion
+
+
+        public static IEnumerable<string> SplitArrayValues(string inputString)
+        {
+            List<string> retList = new List<string>();
+            bool isEscaped = false;
+            StringBuilder sb = new StringBuilder();
+            for (int i = 0; i < inputString.Length; i++)
+            {
+                char currentChar = inputString[i];
+                if (isEscaped)
+                {
+                    isEscaped = false;
+                    if (currentChar == '\\')
+                    {
+                        sb.Append('\\');
+                    }
+                    if (currentChar == ',')
+                    {
+                        sb.Append(',');
+                    }
+                    if (currentChar == 'n')
+                    {
+                        sb.AppendLine();
+                    }
+                }
+                else
+                {
+                    if (currentChar == '\\')
+                    {
+                        isEscaped = true;
+                    }
+                    else
+                    {
+                        if (currentChar == ',')
+                        {
+                            retList.Add(sb.ToString());
+                            sb.Clear();
+                        }
+                        else
+                        {
+                            sb.Append(currentChar);
+                        }
+                    }
+                }
+            }
+            if (sb.Length != 0)
+            {
+                retList.Add(sb.ToString());
+            }
+            return retList;
+        }
+
+        public static string EscapeString(string inputString)
+        {
+            StringBuilder sb = new StringBuilder();
+            for (int i = 0; i < inputString.Length; i++)
+            {
+                char currentChar = inputString[i];
+                if (currentChar == '\\')
+                {
+                    sb.Append(@"\\");
+                    continue;
+                }
+                if (currentChar == ',')
+                {
+                    sb.Append(@"\,");
+                    continue;
+                }
+                if (currentChar == '\r')
+                {
+                    continue;
+                }
+                if (currentChar == '\n')
+                {
+                    sb.Append(@"\n");
+                    continue;
+                }
+                sb.Append(currentChar);
+            }
+            return sb.ToString();
+        }
     }
 }
