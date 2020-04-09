@@ -5,5 +5,7 @@ SettingsParser/bin/*
 SettingsParser/obj/*
 SettingsParserTester/bin/*
 SettingsParserTester/obj/*
+DotNet/bin/*
+DotNet/obj/*
 *.suo
 *.csproj.user
